@@ -1,14 +1,15 @@
+
 # Spot - Bitcoin HD Wallet Billing Microservice
 
 Spot is a Bitcoin billing microservice that provides your infrastructure with an endpoint for generating an infinite amount of addresses to handle transactions between your application and users without the need for 3rd parties.
 
 - 🔑 **Secure By Design** - Spot only requires your public key.
 - ☁️ **Production Ready** - Stateless microservice designed for production.
-- 🌳 **HD Wallets** - Billing that implements [BIP 32 HD Wallets.](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki)
-- 🐳 **DockerHub** - Available on [Docker.](https://hub.docker.com/r/anthonybudd/spot)
+- 🌳 **HD Wallets** - Billing system that implements [BIP 32 HD Wallets.](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki)
+-  🐳 **DockerHub** - Available on [Docker Hub.](https://hub.docker.com/r/anthonybudd/spot)
 
-<p align="center">
-<img width="200" src="https://raw.githubusercontent.com/anthonybudd/spot/master/docs/img/qr-scan.gif"  alt="Scanning GIF">
+<p  align="center">
+<img  width="200" src="https://raw.githubusercontent.com/anthonybudd/spot/master/docs/img/qr-scan.gif"  alt="Scanning GIF">
 </p>
 
 ## Quick Start
@@ -29,7 +30,7 @@ open http://localhost:8888/api/v1/generate/0/0/0.svg?amount=0.005
 
 ### `GET - /api/v1/generate/:account/:wallet/:address`
 
-Spot only has one endpoint that is used to generate the receiving address. 
+Endpoint for generating the receiving address. The `account`, `wallet` and `address` URL parameters represent the derivation path for the BIP 32 tree node.  
 
 ### Response
 By default the response will be a plain JSON object containing the address.
@@ -46,8 +47,8 @@ To create a QR code of the address add the file extension `.png` or `.svg` to th
 If you would like to prompt the user to pay a specific amount when they scan the QR code use the query parameter `amount`, this value will be in BTC.  Example `/api/v1/generate/0/0/0.png?amount=0.0005`.
 
 
-<p align="center">
-<img width="200" src="https://raw.githubusercontent.com/anthonybudd/spot/master/docs/img/qr.png"  alt="QR Code Example">
+<p  align="center">
+<img  width="192" src="https://raw.githubusercontent.com/anthonybudd/spot/master/docs/img/qr.png"  alt="QR Code Example">
 </p>
 <sub><sup>⚠️ Do not send Bitcoin here.</sub></sup>
 
@@ -56,7 +57,7 @@ Spot is a stateless microservice designed to be deployed along with the rest of 
 
 To maximise security Spot does not use your private key. This means if your servers get hacked no sensitive information can be compromised. Even with these security measures you should never allow Spot to be publicly open to the internet.
 
-Each user will thier own corresponding Account in spot.
+Each user on your application will need their own corresponding `account` in spot. If your user ID column is unsigned int you could use this. Alternatively if you use UUID, you may need to add a new int column to the users table called `account_id` for storing the spot account.
 
 In production you should only use one `address` for each transaction. So on the first transaction the derivation path will be `.../0/0/0`, the second will be  `.../0/0/1`, the third `.../0/0/2` and so on. 
 
@@ -88,4 +89,4 @@ Below is a basic example of how Spot works in practice.
 4. You will need to externally verify the payment and confirm that correct amount was sent using a Bitcoin full node or an API.
 
 ### Why "Spot"?
-It's the furthest possible thing from Stripe.
+It's the furthest thing from Stripe.
