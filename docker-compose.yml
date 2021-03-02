@@ -1,0 +1,12 @@
+version: "3.3"
+
+services:
+  spot:
+    build: .
+    entrypoint: "nodemon /app/src/index.js --watch /app"
+    container_name: spot
+    restart: always
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/app
