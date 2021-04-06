@@ -3,11 +3,12 @@
 
 Spot is a Bitcoin billing microservice that provides your infrastructure with an endpoint for generating an infinite amount of addresses to handle transactions between your application and users without the need for 3rd parties.
 
+- 💰 **Multiple Currencies** - Bitcoin, Ethereum, BitcoinCash and Monero.
 - 🔑 **Secure By Design** - Spot only requires your public key.
 - ☁️ **Production Ready** - Stateless microservice designed for production.
 - 🌳 **HD Wallets** - Billing system that implements [BIP 32 HD Wallets.](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki)
+-  🖥 **CLI** - Full-featured Commandline interface.
 -  🐳 **DockerHub** - Available on [Docker Hub.](https://hub.docker.com/r/anthonybudd/spot)
-
 <p  align="center">
 <img  width="200" src="https://raw.githubusercontent.com/anthonybudd/spot/master/docs/img/qr-scan.gif"  alt="Scanning GIF">
 </p>
@@ -51,6 +52,29 @@ If you would like to prompt the user to pay a specific amount when they scan the
 <img  width="192" src="https://raw.githubusercontent.com/anthonybudd/spot/master/docs/img/qr.png"  alt="QR Code Example">
 </p>
 <sub><sup>⚠️ Do not send Bitcoin here.</sub></sup>
+
+## CLI
+Spot has a CLI to make handling value from multiple accounts within your HD wallet simple.
+
+### Balance
+The balance command will return the balance at a path.
+
+```sh
+$ npm run balance -- path
+
+$ npm run balance -- "0'/0/1"
+```
+
+
+### Consolidate
+The consolidate command will move value from a range of paths to a single path. The exmaple will move all value from 0'/0/**{1...5}** and move it to 0'/0/6.
+
+```sh
+$ npm run consolidate -- fromPath fromPathRangeEnd sendToPath [ limit ]
+
+$ npm run consolidate -- "0'/0/1" 5 "0'/0/6"
+$ npm run consolidate -- "0'/0/1" 5 "0'/0/6" 82F8BC3F7BBFC0000
+```
 
 ## Implementation
 Spot is a stateless microservice designed to be deployed along with the rest of your containers in your infrastructure. Your application will make an HTTP request to Spot to generate an address.
