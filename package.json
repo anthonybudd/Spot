@@ -5,9 +5,11 @@
     "author": "Anthony Budd",
     "scripts": {
         "start": "node ./src/index.js",
-        "createState": "node ./src/cli/createState.js",
-        "consolidate": "node ./src/cli/consolidate.js",
-        "balance": "node ./src/cli/balance.js"
+        "derive": "node ./src/cli/derive.js",
+        "analyse": "node ./src/cli/analyse.js",
+        "balance": "node ./src/cli/balance.js",
+        "tx": "node ./src/cli/tx.js",
+        "consolidate": "node ./src/cli/consolidate.js"
     },
     "dependencies": {
         "bip39": "^3.0.3",
@@ -22,6 +24,7 @@
         "hdkey": "^2.0.1",
         "i": "^0.3.6",
         "install": "^0.12.1",
+        "monero-javascript": "^0.5.2",
         "npm": "^6.9.0",
         "qrcode": "^1.4.4",
         "web3": "^1.3.5"

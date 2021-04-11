@@ -1,6 +1,7 @@
 const supported = {
     ETH: require('./eth'),
     BTC: require('./btc'),
+    XMR: require('./xmr'),
 }
 
 module.exports = {

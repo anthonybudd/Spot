@@ -1,5 +1,5 @@
 require('dotenv').load();
-const Interface = require('./../currencies').getInterface(process.env.COIN);
+const Interface = require('./currencies').getInterface(process.env.COIN);
 const { version } = require('./../package');
 const express = require('express');
 const QRCode = require('qrcode');

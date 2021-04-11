@@ -1,4 +1,4 @@
-const { hdkey } = require('ethereumjs-wallet')
+const { hdkey } = require('ethereumjs-wallet');
 const bip39 = require('bip39');
 const Web3 = require('web3');
 
@@ -10,53 +10,50 @@ module.exports = function ETH() {
     this.coinType = 60;
     this.pathPrefix = `m/44'/${this.coinType}'/`
 
-    // Extra
-    this.web3;
-    this.root;
+    this.web3 = new Web3(process.env.ETH_WEB3_PROVIDER);
+    this.root = hdkey.fromMasterSeed(bip39.mnemonicToSeedSync(process.env.ETH_MNEMONIC));
 
 
-    this.init = () => (new Promise(async (resolve, reject) => {
-        var seed = await bip39.mnemonicToSeed(process.env.ETH_MNEMONIC);
-        this.root = hdkey.fromMasterSeed(seed);
+    // Interface Methods
+    this.derivePathToAddress = (path) => (this.root.derivePath(this.pathPrefix.concat(path)).getWallet().getAddressString());
 
-        this.web3 = new Web3(process.env.ETH_WEB3_PROVIDER);
+    this.getBalance = (path) => (this.web3.eth.getBalance(this.derivePathToAddress(path)))
 
-        resolve(this);
-    }))
+    this.createTX = (args) => {
+        var from = this.derivePathToAddress(args.fromPath);
+        var to = args.toAddress || this.derivePathToAddress(args.toPath);
+        var value = args.amount;
+        var gasPrice = (args.gasPrice || 20000000000);
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                var tx = {
+                    from,
+                    to,
+                    gasPrice,
+                    data: "",
+                }
+                tx.gas = await this.web3.eth.estimateGas(tx);
+                tx.value = (value - (tx.gas * gasPrice));
+
+
+                var fullPath = this.pathPrefix.concat(args.fromPath);
+                const signedTransaction = await this.web3.eth.accounts.signTransaction(tx, this.root.derivePath(fullPath).getWallet().getPrivateKeyString());
+
+                // console.log(signedTransaction);
+
+                this.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction)
+                    .on('receipt', (r) => {
+                        // console.log(r);
+                        resolve(r);
+                    });
+            } catch (err) {
+                return reject(err)
+            }
+        })
+    }
 
 
     // Methods
-    this.derivePath = (path) => (this.root.derivePath(this.pathPrefix.concat(path)));
-    this.derivePathToAddress = (path) => (this.root.derivePath(this.pathPrefix.concat(path)).getWallet().getAddressString());
 
-    this.getBalance = (address) => (this.web3.eth.getBalance(address));
-
-    this.createTX = (args) => {
-
-        var from = this.derivePathToAddress(args.fromPath);
-        var to = this.derivePathToAddress(args.toPath);
-        var value = args.amount;
-        var gasPrice = args.gasPrice || 20000000000;
-
-        return new Promise(async (resolve, reject) => {
-            var tx = {
-                from,
-                to,
-                gasPrice,
-                data: "",
-            }
-            tx.gas = await this.web3.eth.estimateGas(tx);
-            tx.value = (value - (tx.gas * gasPrice));
-
-            const signedTransaction = await this.web3.eth.accounts.signTransaction(tx, this.derivePath(args.fromPath).getWallet().getPrivateKeyString());
-
-            // // console.log(signedTransaction);
-
-            this.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction)
-                .on('receipt', (r) => {
-                    // console.log(r);
-                    resolve(r);
-                });
-        })
-    }
 }

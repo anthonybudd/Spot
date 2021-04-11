@@ -13,20 +13,20 @@ module.exports = function BTC() {
     // Extra
     this.root = bip32.fromSeed(bip39.mnemonicToSeedSync(process.env.BTC_MNEMONIC));
 
-    this.init = () => (new Promise(async (resolve, reject) => {
-
-        resolve();
-    }))
 
 
-
-    // Methods
+    // Interface Methods
     this.derivePathToAddress = async (path) => {
         var node = await this.root.derivePath(this.pathPrefix.concat(path))
         return await bitcoinJS.payments.p2pkh({ pubkey: node.publicKey }).address
     };
 
-    this.getBalance = (address) => { };
+    this.getBalance = (path) => {
 
-    this.createTX = (args) => { }
+    };
+
+    this.createTX = (tx) => { }
+
+
+    // Methods
 }
